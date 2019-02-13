@@ -34,6 +34,8 @@ def catalog():
     # checar argumento category
     categoryName = request.args.get('category', '')
 
+    # TODO: Pagina
+
     try:
         category = session.query(
             Category).filter_by(name=categoryName.title()).first()
@@ -50,6 +52,9 @@ def showItem():
     # checar argumento id
     itemID = request.args.get('id')
 
+    # TODO: Pegar informações
+    # TODO: Pagina
+
     # retornar ao catalog se o id for invalido
     if ((itemID is '' or itemID is None) or (int(itemID) not in ids)):
         return redirect(url_for('catalog'))
@@ -62,6 +67,8 @@ def showItem():
 @app.route("/create.html", methods=['GET', 'POST'])
 # @login_required
 def createItem():
+    # TODO: Criar item
+    # TODO: Pagina
     if request.method == 'POST':
         # criar novo item
         return "Create item"
@@ -76,6 +83,9 @@ def createItem():
 def editItem():
     # checar argumento id
     itemID = request.args.get('id')
+
+    # TODO: editar item
+    # TODO: Pagina
 
     # retornar ao catalog se o id for invalido
     if ((itemID is '' or itemID is None) or (int(itemID) not in ids)):
@@ -96,6 +106,9 @@ def deleteItem():
     # checar argumento id
     itemID = request.args.get('id')
 
+    # TODO: excluir item
+    # TODO: Pagina
+
     # retornar ao catalog se o id for invalido
     if ((itemID is '' or itemID is None) or (int(itemID) not in ids)):
         return redirect(url_for('catalog'))
@@ -109,30 +122,39 @@ def deleteItem():
 # mostrar categorias e itens
 @app.route("/catalog.json")
 def catalogJSON():
-    # retornar json com informacoes de todo o catalogo
-    return jsonify({'message': 'Show all catalog categories and items'}), 200
+    categories = session.query(Category).all()
+    # salva categorias em um dicionario
+    category_dict = [c.serialize for c in categories]
+    for c in range(len(category_dict)):
+        items = [i.serialize for i in session.query(Item)
+                 .filter_by(category_id=category_dict[c]["id"]).all()]
+        if items:
+            # salva itens dentro do dicionario de categorias
+            category_dict[c]["items"] = items
+    return jsonify(categories=category_dict), 200
 
 
 # mostrar todas as categorias
 @app.route("/categories.json")
 def categoriesJSON():
     # retornar json com todas as categorias
-    return jsonify({'message': 'Show categories'}), 200
+    categories = session.query(Category).all()
+    return jsonify(categories=[c.serialize for c in categories]), 200
 
 
 # mostrar itens de uma categoria
 @app.route("/category.json")
 def categoryJSON():
-    # checar argumento id
-    category = request.args.get('name')
+    category_name = request.args.get('name')
 
-    # retornar erro 400(bad request) se a categoria for invalida
-    if ((category is '' or category is None)
-       or (category not in categoriesNames)):
+    try:
+        category = session.query(Category).filter_by(
+            name=category_name.title()).one()
+        items = session.query(Item).filter_by(category=category).all()
+        return jsonify(items=[i.serialize for i in items]), 200
+    except Exception as e:
+        print('Error: '+str(e))
         abort(400)
-
-    # retornar json com todos os itens de uma categoria
-    return jsonify({'message': 'Show category items'}), 200
 
 
 # mostrar informacoes de um item especifico
@@ -141,12 +163,14 @@ def itemJSON():
     # checar argumento id
     itemID = request.args.get('id')
 
-    # retornar erro 400(bad request) se o id for invalido
-    if ((itemID is '' or itemID is None) or (int(itemID) not in ids)):
+    try:
+        item = session.query(
+            Item).filter_by(id=itemID.title()).first()
+        # mostrar itens de acordo com a categoria requisitada
+        return jsonify([item.serialize]), 200
+    except Exception as e:
+        print('Error: '+str(e))
         abort(400)
-
-    # retornar json com as informacoes de um item especifico
-    return jsonify({'message': 'Show item info'}), 200
 
 
 if __name__ == '__main__':

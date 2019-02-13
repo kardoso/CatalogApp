@@ -83,6 +83,7 @@ class Item(Base):
         return {
             'name': self.name,
             'id': self.id,
+            'description': self.description,
             'creation_date': self.creation_date,
             'image': self.image,
             'category': self.category.name,
