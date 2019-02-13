@@ -15,8 +15,7 @@ print("Creating data...")
 
 # Create user
 user1 = User(username="Samuel Cardoso", email="scksamuel.sc@gmail.com",
-             picture='''ttps://lh4.googleusercontent.com/
-             -R_xSTT7918M/AAAAAAAAAAI/AAAAAAAADmE/SHzJSMfwnpI/photo.jpg''')
+             picture='''https://lh4.googleusercontent.com/-R_xSTT7918M/AAAAAAAAAAI/AAAAAAAADmE/SHzJSMfwnpI/photo.jpg''')
 session.add(user1)
 session.commit()
 
@@ -27,16 +26,14 @@ session.commit()
 
 # Create items
 item1 = Item(name="Videogame",
-             description='''A new device that will provide
-              lots of fun for you and your friends.''',
+             description='''A new device that will provide lots of fun for you and your friends.''',
              category=category1,
              user=user1)
 session.add(item1)
 session.commit()
 
 item2 = Item(name="Mobile Phone",
-             description='''A calling device that will
-              allow you to spend hours talking to friends.''',
+             description='''A calling device that will allow you to spend hours talking to friends.''',
              category=category1,
              user=user1)
 session.add(item2)
@@ -50,16 +47,14 @@ session.commit()
 
 # Create items
 item1 = Item(name="Tour Bus",
-             description='''It fits the whole family and
-              there's still plenty of space for your friends.''',
+             description='''It fits the whole family and there's still plenty of space for your friends.''',
              category=category2,
              user=user1)
 session.add(item1)
 session.commit()
 
 item2 = Item(name="Bycicle",
-             description='''A two-wheeled vehicle
-              for those who do not like engines''',
+             description='''A two-wheeled vehicle for those who do not like engines''',
              category=category2,
              user=user1)
 session.add(item2)
@@ -72,16 +67,14 @@ session.commit()
 
 # Create items
 item1 = Item(name="Pants",
-             description='''It covers private places of your body.
-              Essential for anyone planning to going out.''',
+             description='''It covers private places of your body. Essential for anyone planning to going out.''',
              category=category3,
              user=user1)
 session.add(item1)
 session.commit()
 
 item2 = Item(name="Scarf",
-             description='''It protects your neck from the cold.
-              For those planning to go out during a blizzard.''',
+             description='''It protects your neck from the cold. For those planning to go out during a blizzard.''',
              category=category3,
              user=user1)
 session.add(item2)
@@ -117,8 +110,7 @@ session.commit()
 
 # Create items
 item3 = Item(name="Bedside table",
-             description='''A great deal if you're lazy
-              or want to keep something close to you.''',
+             description='''A great deal if you're lazy or want to keep something close to you.''',
              category=category4,
              user=user1)
 session.add(item3)
