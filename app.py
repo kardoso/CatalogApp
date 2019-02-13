@@ -3,9 +3,24 @@
 
 import os
 import hashlib
+# importar operações CRUD
+from sqlalchemy import create_engine
+from sqlalchemy.orm import sessionmaker
+# importar classes do arquivo "database_setup"
+from setupdb import User, Category, Item
+
 from flask import Flask, request, redirect, url_for, jsonify, abort
 
 app = Flask(__name__)
+
+# selecionar banco de dados
+engine = create_engine(
+    'sqlite:///catalog.db',
+    connect_args={'check_same_thread': False}
+)
+# estabelecer conexão
+DBSession = sessionmaker(bind=engine)
+session = DBSession()
 
 # Variaves usadas para teste inicial
 categoriesNames = ['sport', 'social', 'casual']
@@ -15,21 +30,18 @@ ids = [1, 2, 3, 4, 5]
 @app.route("/")
 @app.route("/catalog")
 @app.route("/catalog.html")
-def index():
+def catalog():
     # checar argumento category
-    category = request.args.get('category', '')
+    categoryName = request.args.get('category', '')
 
-    if category is not '':
-        if category in categoriesNames:
-            # mostrar itens de acordo com a categoria requisitada
-            return ("Show categories and items of category " + category)
-        else:
-            # recarregar o catalog para
-            # nao manter a url invalida no barra de navegacao
-            return redirect(url_for('catalog'))
-
-    # mostrar itens recentes
-    return "Show categories and latest items"
+    try:
+        category = session.query(
+            Category).filter_by(name=categoryName.title()).first()
+        # mostrar itens de acordo com a categoria requisitada
+        return ("Show categories and items of category " + category.name)
+    except AttributeError:
+        # mostrar itens recentes
+        return "Show categories and latest items"
 
 
 @app.route("/item")
