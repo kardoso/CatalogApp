@@ -9,7 +9,9 @@ from sqlalchemy.orm import sessionmaker
 # importar classes do arquivo "database_setup"
 from setupdb import User, Category, Item
 
-from flask import Flask, request, redirect, url_for, jsonify, abort
+from flask import Flask, request, redirect, render_template, url_for, jsonify, abort
+
+import json
 
 app = Flask(__name__)
 
@@ -22,10 +24,6 @@ engine = create_engine(
 DBSession = sessionmaker(bind=engine)
 session = DBSession()
 
-# Variaves usadas para teste inicial
-categoriesNames = ['sport', 'social', 'casual']
-ids = [1, 2, 3, 4, 5]
-
 
 @app.route("/")
 @app.route("/catalog")
@@ -34,16 +32,26 @@ def catalog():
     # checar argumento category
     categoryName = request.args.get('category', '')
 
-    # TODO: Pagina
+    categories = session.query(Category).all()
 
     try:
         category = session.query(
             Category).filter_by(name=categoryName.title()).first()
+        items = session.query(
+            Item).filter_by(category_id=category.id).all()
         # mostrar itens de acordo com a categoria requisitada
-        return ("Show categories and items of category " + category.name)
+        return render_template('catalog.html',
+                                category_title=category.name,
+                                categories=categories,
+                                items=items)
     except AttributeError:
+        # TODO: mostrar apenas os 5 itens mais recentes
         # mostrar itens recentes
-        return "Show categories and latest items"
+        items = session.query(Item).all()
+        return render_template('catalog.html',
+                                category_title="Latest items",
+                                categories=categories,
+                                items=items)
 
 
 @app.route("/item")
@@ -52,29 +60,48 @@ def showItem():
     # checar argumento id
     itemID = request.args.get('id')
 
-    # TODO: Pegar informações
-    # TODO: Pagina
+    # armazenar todos os itens por id
+    list_of_id = [i.id for i in session.query(Item).all()]
 
     # retornar ao catalog se o id for invalido
-    if ((itemID is '' or itemID is None) or (int(itemID) not in ids)):
+    if ((itemID is '' or itemID is None) or (int(itemID) not in list_of_id)):
         return redirect(url_for('catalog'))
 
+    item = session.query(Item).filter_by(id=itemID).first()
+
     # mostrar item requisitado
-    return ("Show item " + itemID)
+    return render_template('item.html', item=item)
 
 
 @app.route("/create", methods=['GET', 'POST'])
 @app.route("/create.html", methods=['GET', 'POST'])
 # @login_required
 def createItem():
-    # TODO: Criar item
-    # TODO: Pagina
     if request.method == 'POST':
         # criar novo item
-        return "Create item"
+        category_name = request.form["category"]
+        category = session.query(Category).filter_by(name=category_name.title()).first()
+        name = request.form["name"]
+        image = request.form["image"]
+        description = request.form["description"]
+
+        #teste
+        user = session.query(User).first()
+
+        item = Item(name=name,
+             description=description,
+             category=category,
+             image=image,
+             user=user)
+        session.add(item)
+        session.commit()
+
+        # mostrar item criado
+        return redirect(url_for('showItem', id=item.id))
     else:
         # direcionar para a pagina de criacao de item
-        return "Page to create item"
+        categories = session.query(Category).all()
+        return render_template('create.html', categories=categories)
 
 
 @app.route("/edit", methods=['GET', 'POST'])
@@ -84,19 +111,23 @@ def editItem():
     # checar argumento id
     itemID = request.args.get('id')
 
-    # TODO: editar item
-    # TODO: Pagina
+    # armazenar todos os itens por id
+    list_of_id = [i.id for i in session.query(Item).all()]
 
     # retornar ao catalog se o id for invalido
-    if ((itemID is '' or itemID is None) or (int(itemID) not in ids)):
+    if ((itemID is '' or itemID is None) or (int(itemID) not in list_of_id)):
         return redirect(url_for('catalog'))
+
+    categories = session.query(Category).all()
 
     if request.method == 'POST':
         # alterar informacoes do item
+        # TODO: editar item
         return ("Update item" + itemID)
     else:
+        item = session.query(Item).filter_by(id=itemID).first()
         # direcionar para a pagina de edicao de item
-        return "Page to update item"
+        return render_template('edit.html', categories=categories, item=item)
 
 
 @app.route("/delete", methods=['POST'])
@@ -109,12 +140,19 @@ def deleteItem():
     # TODO: excluir item
     # TODO: Pagina
 
+    # armazenar todos os itens por id
+    list_of_id = [i.id for i in session.query(Item).all()]
+
     # retornar ao catalog se o id for invalido
-    if ((itemID is '' or itemID is None) or (int(itemID) not in ids)):
+    if ((itemID is '' or itemID is None) or (int(itemID) not in list_of_id)):
         return redirect(url_for('catalog'))
 
-    # deletar item
-    return ("Delete item" + itemID)
+    # deletar itemchemy.orm.query.Query' is not map
+    item = session.query(Item).filter_by(id=itemID).first()
+    session.delete(item)
+    session.commit()
+
+    return redirect(url_for('catalog'))
 
 
 #    ENDPOINTS JSON   #
