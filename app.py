@@ -122,8 +122,16 @@ def editItem():
 
     if request.method == 'POST':
         # alterar informacoes do item
-        # TODO: editar item
-        return ("Update item" + itemID)
+        item = session.query(Item).filter_by(id=itemID).first()
+        category_name = request.form["category"]
+        item.category = session.query(Category).filter_by(name=category_name.title()).first()
+        item.name = request.form["name"]
+        item.image = request.form["image"]
+        item.description = request.form["description"]
+        session.add(item)
+        session.commit()
+        
+        return redirect(url_for('showItem', id=item.id))
     else:
         item = session.query(Item).filter_by(id=itemID).first()
         # direcionar para a pagina de edicao de item
@@ -136,9 +144,6 @@ def editItem():
 def deleteItem():
     # checar argumento id
     itemID = request.args.get('id')
-
-    # TODO: excluir item
-    # TODO: Pagina
 
     # armazenar todos os itens por id
     list_of_id = [i.id for i in session.query(Item).all()]
