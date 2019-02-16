@@ -1,0 +1,227 @@
+*{
+    margin: auto;
+}
+
+html, body {
+    width: 100%;
+    height: 100%;
+    color: white;
+    font-family: "Roboto";
+    font-weight: 400;
+}
+
+.site{
+    display: grid;
+    margin: auto;
+    grid-column-gap: 0px;
+    grid-row-gap: 20px;
+    grid-template-columns: 2fr 2fr 2fr;
+    grid-template-rows: 80px 1fr 50px;
+    grid-template-areas: 
+        "header     header      login"
+        "category   items       items"
+        "footer     footer      footer";
+    background: whitesmoke;
+    color: #444;
+    min-height: 100%;
+}
+
+.header{
+    grid-area: header;
+    text-align: left;
+    padding: 0 25%;
+    width: 100%;
+    height: 100%;
+    background: rgb(71, 167, 167);
+}
+
+h1{
+    padding: 1.5rem;
+}
+
+.login{
+    margin: 0;
+    grid-area: login;
+    width: 100%;
+    background: rgb(71, 167, 167);
+    /*background: rgb(255, 20, 147);*/
+}
+
+.login .loginbuttons{
+    padding: 1.25rem;
+    margin: auto;
+    text-align: center;
+}
+
+.category-container{
+    margin: 0 auto;
+    margin-right: 0;
+    width: 100%;
+    border-radius: 25px 0px 0px 25px;
+    grid-area: category;
+    align-content: center;
+    align-self: flex-start;
+    text-align: center;
+    /*background: red;*/
+    max-width: 400px;
+}
+
+.category{
+    -webkit-transition-duration: 0.4s; /* Safari */
+    transition-duration: 0.4s;
+    padding: .225rem;
+    margin: 10px;
+    border-radius: 10px;
+    background: rgb(167, 167, 167);
+    display: grid;
+    align-items: center;
+    align-content: center;
+    text-align: center;
+    grid-auto-flow: column;
+    max-height: 100px;
+}
+
+.category-container a:hover .category{
+    background: white;
+    color: rgb(167, 167, 167);
+}
+
+.items-container{
+    margin: 0 auto;
+    margin-left: 0;
+    width: 100%;
+    border-radius: 0px 25px 25px 25px;
+    align-self: flex-start;
+    grid-area: items;
+    align-content: center;
+    justify-items: center;
+    text-align: center;
+    /*background: green;*/
+    max-width: 920px;
+}
+
+.item{
+    -webkit-transition-duration: 0.4s; /* Safari */
+    transition-duration: 0.4s;
+    margin: 10px;
+    padding: 5rem;
+    border-radius: 10px;
+    border-style: dashed;
+    border-color: rgb(167, 167, 167);
+    /*background: rgb(167, 167, 167);*/
+    display: grid;
+    align-items: center;
+    align-content: center;
+    text-align: center;
+    grid-auto-flow: column;
+    max-height: 100px;
+}
+
+a:link, a:visited{
+    color: white;
+    text-decoration: none;
+}
+
+.items-container a:hover .item{
+    border-style: solid;
+    border-color: black;
+}
+
+.item p{
+    padding: 1rem 0;
+    min-width: 20%;
+    margin: auto;
+    text-align: center;
+    color: black;
+}
+
+.itemimage{
+    margin: auto;
+    min-width: 50px;
+    min-height: 50px;
+}
+
+.item img{
+    margin: auto;
+    max-height: 120px;
+    max-width: 160px;
+}
+
+.footer{
+    width: 100%;
+    grid-area: footer;
+    align-content: center;
+    text-align: center;
+    background: rgb(71, 167, 167);
+}
+
+.footer p{
+    padding: .225rem;
+    color: white;
+}
+
+#addButton, #signoutButton {
+    -webkit-transition-duration: 0.4s; /* Safari */
+    transition-duration: 0.4s;
+    background-color:rgb(167, 167, 167);
+    border: none;
+    outline: none;
+    color: white;
+    padding: 10px 14px;
+    text-align: center;
+    text-decoration: none;
+    display: inline-block;
+    font-size: 16px;
+    border-radius: 25px;
+    cursor: pointer;
+}
+
+#addButton:hover, #signoutButton:hover {
+    color: rgb(167, 167, 167);
+    background-color: #ffffff;
+    border-radius: 25px;
+}
+
+@media (max-width: 800px) {
+    .site{
+        grid-row-gap: 5px;
+        grid-template-columns: 1fr;
+        grid-template-rows: 80px .1fr 1fr 80px 40px;
+        grid-template-areas: 
+            "header"
+            "category"
+            "items"
+            "login"
+            "footer";
+        background: whitesmoke;
+        color: #444;
+        min-height: 100%;
+    }
+
+    .header{
+        text-align: center;
+        padding: 0;
+    }
+
+    .login{
+        background: rgb(255, 20, 147, 0);
+    }
+
+    .login .loginbuttons{
+        padding: 1.25rem;
+    }
+
+    .category-container{
+        margin-right: auto;
+        border-radius: 25px 25px 25px 25px;
+    }
+    
+    .items-container{
+        margin-left: auto;
+        border-radius: 25px 25px 25px 25px;
+    }
+
+    .item{
+        grid-auto-flow: row;
+    }
+}

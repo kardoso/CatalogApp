@@ -1,0 +1,220 @@
+*{
+    margin: auto;
+}
+
+html, body {
+    width: 100%;
+    height: 100%;
+    color: white;
+    font-family: "Roboto";
+    font-weight: 400;
+}
+
+.site{
+    display: grid;
+    margin: auto;
+    grid-column-gap: 0px;
+    grid-row-gap: 20px;
+    grid-template-columns: 4fr 2fr;
+    grid-template-rows: 80px 1fr 50px;
+    grid-template-areas: 
+        "header     login"
+        "item       item"
+        "footer     footer";
+    background: whitesmoke;
+    color: #444;
+    min-height: 100%;
+}
+
+.header{
+    grid-area: header;
+    text-align: left;
+    padding: 0 25%;
+    width: 100%;
+    height: 100%;
+    background: rgb(71, 167, 167);
+}
+
+h1{
+    padding: 1.5rem;
+}
+
+.login{
+    margin: 0;
+    grid-area: login;
+    width: 100%;
+    background: rgb(71, 167, 167);
+    /*background: rgb(255, 20, 147);*/
+}
+
+.login .loginbuttons{
+    padding: 1.25rem;
+    margin: auto;
+    text-align: center;
+}
+
+.create-form{
+    margin: 0 auto;
+    width: 100%;
+    border-radius: 0px 25px 25px 25px;
+    align-self: flex-start;
+    grid-area: item;
+    align-content: center;
+    justify-items: center;
+    text-align: center;
+    /*background: green;*/
+    max-width: 920px;
+}
+
+a:link, a:visited{
+    color: white;
+    text-decoration: none;
+}
+
+.form-field{
+    -webkit-transition-duration: 0.4s; /* Safari */
+    transition-duration: 0.4s;
+    padding: 1rem;
+    border-color: rgb(167, 167, 167);
+    /*background: rgb(167, 167, 167);*/
+    align-items: center;
+    align-content: center;
+    text-align: center;
+    grid-auto-flow: column;
+    max-width: 100%;
+}
+
+.form-field p{
+    margin-right: 0;
+    width: 50%;
+    margin: auto;
+    color: black;
+}
+
+.form-field input{
+    border: solid 1px;
+    margin-left: 0;
+    width: 50%;
+    margin: auto;
+    color: black;
+}
+
+.footer{
+    width: 100%;
+    grid-area: footer;
+    align-content: center;
+    text-align: center;
+    background: rgb(71, 167, 167);
+}
+
+.footer p{
+    padding: .225rem;
+    color: white;
+}
+
+#editbuttons{
+    grid-auto-flow: column;
+}
+
+.button-confirm, .button-cancel, #signoutButton {
+    -webkit-transition-duration: 0.4s; /* Safari */
+    transition-duration: 0.4s;
+    background-color:rgb(214, 214, 214);
+    border: none;
+    outline: none;
+    color: rgb(56, 56, 56);
+    padding: 10px 14px;
+    text-align: center;
+    text-decoration: none;
+    display: inline-block;
+    font-size: 16px;
+    border-radius: 25px;
+    cursor: pointer;
+}
+
+.button-cancel{
+    margin-left: 0;
+}
+
+.button-confirm{
+    margin-right: 0;
+}
+
+.button-confirm i, .button-cancel i{
+    color: rgb(56, 56, 56);
+}
+
+.button-confirm:hover i, .button-cancel:hover i {
+    color: white;
+}
+
+.button-confirm:hover{
+    background-color: #27aa82;
+}
+
+.button-cancel:hover{
+    background-color: #a83636;
+}
+
+#signoutButton:hover {
+    background-color: #ffffff;
+}
+
+input[type=text], select {
+    -webkit-transition-duration: 0.4s; /* Safari */
+    transition-duration: 0.4s;
+    background-color: white;
+    outline: none;
+    padding: 1rem 3rem;
+    border-radius: 15px;
+    border-color: rgb(71, 167, 167);
+    border-width: 2px;
+    text-align: center;
+}
+
+input[type=text]:focus, select:focus {
+    background-color: rgb(71, 167, 167);
+    color: white;
+}
+
+::placeholder {
+    color: white;
+}
+
+@media (max-width: 800px) {
+    .site{
+        grid-row-gap: 5px;
+        grid-template-columns: 1fr;
+        grid-template-rows: 80px 1fr 80px 40px;
+        grid-template-areas: 
+            "header"
+            "item"
+            "login"
+            "footer";
+        background: whitesmoke;
+        color: #444;
+        min-height: 100%;
+        max-width: 100%;
+    }
+
+    .header{
+        text-align: center;
+        padding: 0;
+    }
+
+    .login{
+        background: rgb(255, 20, 147, 0);
+    }
+
+    .login .loginbuttons{
+        padding: 1.25rem;
+    }
+
+    .form-field{
+        grid-auto-flow: row;
+    }
+
+    .submitbuttons{
+        grid-auto-flow: column;
+    }
+}
