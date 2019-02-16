@@ -164,7 +164,7 @@ session.commit()
 desc = "A great deal if you're lazy "
 desc += "or want to keep something close to you."
 img = "https://hniesfp.imgix.net/8/"
-img = "images/detailed/63/thaisBS_main.jpg"
+img += "images/detailed/63/thaisBS_main.jpg"
 item3 = Item(name="Bedside table",
              description=desc,
              image=img,
