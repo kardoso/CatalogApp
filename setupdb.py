@@ -13,12 +13,18 @@ Base = declarative_base()
 secret_key = hashlib.sha256(os.urandom(1024)).hexdigest()
 
 
+print("Making user scheme...")
+
+
 class User(Base):
     __tablename__ = 'user'
     id = Column(Integer, primary_key=True)
     username = Column(String(32))
     picture = Column(String)
     email = Column(String, index=True)
+
+
+print("Making categories scheme...")
 
 
 class Category(Base):
@@ -32,6 +38,9 @@ class Category(Base):
             'id': self.id,
             'name': self.name,
         }
+
+
+print("Making items scheme...")
 
 
 class Item(Base):
@@ -62,6 +71,9 @@ class Item(Base):
         }
 
 
+print("Almost done...")
 engine = create_engine('sqlite:///catalog.db')
 
 Base.metadata.create_all(engine)
+
+print("Ding ding! Setup is finished.")

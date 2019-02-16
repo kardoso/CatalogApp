@@ -42,18 +42,15 @@ CLIENT_ID = json.loads(
 @app.route("/catalog")
 @app.route("/catalog.html")
 def catalog():
-    logged=False
+    logged = False
     state = ''
     if 'username' not in login_session:
         state = hashlib.sha256(os.urandom(1024)).hexdigest()
         login_session['state'] = state
-        logged=False
+        logged = False
     else:
         state = login_session['state']
-        logged=True
-    
-
-    print(state)
+        logged = True
 
     # checar argumento category
     categoryName = request.args.get('category', '')
@@ -67,32 +64,32 @@ def catalog():
             Item).filter_by(category_id=category.id).all()
         # mostrar itens de acordo com a categoria requisitada
         return render_template('catalog.html',
-                                category_title=category.name,
-                                categories=categories,
-                                items=items,
-                                STATE=state,
-                                logged=logged)
+                               category_title=category.name,
+                               categories=categories,
+                               items=items,
+                               STATE=state,
+                               logged=logged)
     except AttributeError:
         # TODO: mostrar apenas os 5 itens mais recentes
         # mostrar itens recentes
         items = session.query(Item).all()
         return render_template('catalog.html',
-                                category_title="Latest items",
-                                categories=categories,
-                                items=items,
-                                STATE=state,
-                                logged=logged)
+                               category_title="Latest items",
+                               categories=categories,
+                               items=items,
+                               STATE=state,
+                               logged=logged)
 
 
 @app.route("/item")
 @app.route("/item.html")
 def showItem():
-    logged=True
-    isCreator=False
+    logged = True
+    isCreator = False
     if 'username' not in login_session:
         state = hashlib.sha256(os.urandom(1024)).hexdigest()
         login_session['state'] = state
-        logged=False
+        logged = False
 
     # checar argumento id
     itemID = request.args.get('id')
@@ -113,38 +110,43 @@ def showItem():
 
     # mostrar item requisitado
     return render_template('item.html',
-                            item=item,
-                            STATE=login_session['state'],
-                            logged=logged,
-                            isCreator=isCreator)
+                           item=item,
+                           STATE=login_session['state'],
+                           logged=logged,
+                           isCreator=isCreator)
 
 
 @app.route("/create", methods=['GET', 'POST'])
 @app.route("/create.html", methods=['GET', 'POST'])
 def createItem():
-    logged=True
+    logged = True
     if 'username' not in login_session:
-        logged=False
+        logged = False
         return redirect(url_for('catalog'))
 
     if request.method == 'POST':
         # criar novo item
         category_name = request.form["category"]
-        category = session.query(Category).filter_by(name=category_name.title()).first()
+        category = session.query(
+            Category).filter_by(
+                name=category_name.title()).first()
         name = request.form["name"]
         description = request.form["description"]
         image = request.form["image"]
 
         if not image_exists(image):
-            image = "http://www.vacationmexicobeach.com/images/no-image-available2.jpg"
+            image = "http://www.vacationmexicobeach.com"
+            image += "/images/no-image-available2.jpg"
 
-        user = session.query(User).filter_by(email=login_session['email']).first()
+        user = session.query(
+            User).filter_by(
+                email=login_session['email']).first()
 
         item = Item(name=name,
-             description=description,
-             category=category,
-             image=image,
-             user=user)
+                    description=description,
+                    category=category,
+                    image=image,
+                    user=user)
         session.add(item)
         session.commit()
 
@@ -153,11 +155,18 @@ def createItem():
     else:
         # direcionar para a pagina de criacao de item
         categories = session.query(Category).all()
-        return render_template('create.html', categories=categories, logged=logged)
+        return render_template('create.html',
+                               categories=categories,
+                               logged=logged)
 
 
 def image_exists(path):
-    isImage = path.endswith(".png") or path.endswith(".jpg") or path.endswith("bmp") or path.endswith("gif")
+    isImage = (
+        path.endswith(".png") or
+        path.endswith(".jpg") or
+        path.endswith("bmp") or
+        path.endswith("gif")
+    )
     if isImage:
         result = requests.head(path)
         return result.status_code == 200
@@ -168,9 +177,9 @@ def image_exists(path):
 @app.route("/edit", methods=['GET', 'POST'])
 @app.route("/edit.html", methods=['GET', 'POST'])
 def editItem():
-    logged=True
+    logged = True
     if 'username' not in login_session:
-        logged=False
+        logged = False
         return redirect(url_for('catalog'))
 
     # checar argumento id
@@ -193,29 +202,32 @@ def editItem():
         image = request.form["image"]
 
         item = session.query(Item).filter_by(id=itemID).first()
-        
+
         # alterar informacoes do item
-        item.category = session.query(Category).filter_by(name=category_name.title()).first()
+        item.category = session.query(
+            Category).filter_by(
+                name=category_name.title()).first()
         item.name = name
         item.description = description
         if image_exists(image):
             item.image = image
         session.add(item)
         session.commit()
-        
+
         return redirect(url_for('showItem', id=item.id))
     else:
         item = session.query(Item).filter_by(id=itemID).first()
         # direcionar para a pagina de edicao de item
-        return render_template('edit.html', categories=categories, item=item, logged=logged)
+        return render_template('edit.html',
+                               categories=categories,
+                               item=item,
+                               logged=logged)
 
 
 @app.route("/delete", methods=['POST'])
 @app.route("/delete.html", methods=['POST'])
 def deleteItem():
-    #logged=True
     if 'username' not in login_session:
-        #logged=False
         return redirect(url_for('catalog'))
 
     # checar argumento id
@@ -294,17 +306,15 @@ def itemJSON():
 
 #     Login, autorizacao e autenticacao     #
 
-#Token antifraude
+# Token antifraude
 @app.route('/login')
 @app.route('/login.html')
 def showLogin():
-    #state = ''.join(random.choice(string.ascii_uppercase + string.digits)
-     #               for x in range(32))
-    #login_session['state'] = state
+    # state = ''.join(random.choice(string.ascii_uppercase + string.digits)
+    #               for x in range(32))
     state = hashlib.sha256(os.urandom(1024)).hexdigest()
     login_session['state'] = state
     return render_template('login.html', STATE=state)
-    #return "The current session state is %s" % login_session['state']
 
 
 @app.route('/gconnect', methods=['POST'])
@@ -335,7 +345,7 @@ def gconnect():
     url = ('https://www.googleapis.com/oauth2/v1/tokeninfo?access_token=%s'
            % access_token)
     h = httplib2.Http()
-    #result = json.loads(h.request(url, 'GET')[1])
+    # result = json.loads(h.request(url, 'GET')[1])
     response = h.request(url, 'GET')[1]
     str_response = response.decode('utf-8')
     result = json.loads(str_response)
@@ -357,14 +367,15 @@ def gconnect():
     if result['issued_to'] != CLIENT_ID:
         response = make_response(
             json.dumps("Token's client ID does not match app's."), 401)
-        print ("Token's client ID does not match app's.")
+        print("Token's client ID does not match app's.")
         response.headers['Content-Type'] = 'application/json'
         return response
 
     stored_access_token = login_session.get('access_token')
     stored_gplus_id = login_session.get('gplus_id')
     if stored_access_token is not None and gplus_id == stored_gplus_id:
-        response = make_response(json.dumps('Current user is already connected.'),
+        response = make_response(json.dumps(
+            'Current user is already connected.'),
                                  200)
         response.headers['Content-Type'] = 'application/json'
         return response
@@ -378,7 +389,6 @@ def gconnect():
     params = {'access_token': credentials.access_token, 'alt': 'json'}
     answer = requests.get(userinfo_url, params=params)
 
-    #data = answer.json()
     data = answer.json()
 
     login_session['username'] = data['name']
@@ -389,15 +399,14 @@ def gconnect():
     if not getUserID(login_session['email']):
         login_session['user_id'] = createUser(login_session)
 
-    #flash("You are now logged in as %s" % login_session['username'])
+    # flash("You are now logged in as %s" % login_session['username'])
     output = ''
     output += '<h1>Welcome, '
     output += login_session['username']
     output += '!</h1>'
     output += '<img src="'
     output += login_session['picture']
-    output += ' " style = "width: 300px; height: 300px;border-radius: 150px;-webkit-border-radius: 150px;-moz-border-radius: 150px;"> '
-    print ("done!")
+    print("done!")
     return output
 
 
@@ -420,7 +429,8 @@ def getUserID(email):
     try:
         user = session.query(User).filter_by(email=email).one()
         return user.id
-    except:
+    except Exception as e:
+        print(e)
         return None
 
 
@@ -428,18 +438,22 @@ def getUserID(email):
 def gdisconnect():
     access_token = login_session.get('access_token')
     if access_token is None:
-        print ('Access Token is None')
-        response = make_response(json.dumps('Current user not connected.'), 401)
+        print('Access Token is None')
+        response = make_response(json.dumps(
+            'Current user not connected.'), 401)
         response.headers['Content-Type'] = 'application/json'
         return response
-    print ('In gdisconnect access token is %s', access_token)
-    print ('User name is: ')
-    print (login_session['username'])
-    url = 'https://accounts.google.com/o/oauth2/revoke?token=%s' % login_session['access_token']
+    print('In gdisconnect access token is %s', access_token)
+    print('User name is: ')
+    print(login_session['username'])
+    url = (
+        'https://accounts.google.com/o/oauth2/revoke?token=%s'
+        % login_session['access_token']
+    )
     h = httplib2.Http()
     result = h.request(url, 'GET')[0]
-    print ('result is ')
-    print (result)
+    print('result is ')
+    print(result)
     if result['status'] == '200':
         del login_session['access_token']
         del login_session['gplus_id']
@@ -451,7 +465,8 @@ def gdisconnect():
         response.headers['Content-Type'] = 'application/json'
         return response
     else:
-        response = make_response(json.dumps('Failed to revoke token for given user.'), 400)
+        response = make_response(json.dumps(
+            'Failed to revoke token for given user.'), 400)
         response.headers['Content-Type'] = 'application/json'
         return response
 
