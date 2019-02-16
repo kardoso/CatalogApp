@@ -67,9 +67,10 @@ def catalog():
                                STATE=state,
                                logged=logged)
     except AttributeError:
-        # TODO: mostrar apenas os 5 itens mais recentes
-        # mostrar itens recentes
-        items = session.query(Item).all()
+        # mostrar apenas os 3 itens mais recentes
+        items = session.query(
+            Item).order_by(
+                Item.creation_date.desc()).limit(3)
         return render_template('catalog.html',
                                category_title="Latest items",
                                categories=categories,
@@ -131,6 +132,7 @@ def createItem():
         description = request.form["description"]
         image = request.form["image"]
 
+        # checar imagem
         if not image_exists(image):
             image = "http://www.vacationmexicobeach.com"
             image += "/images/no-image-available2.jpg"
@@ -157,7 +159,9 @@ def createItem():
                                logged=logged)
 
 
+# checar se um link e valido
 def image_exists(path):
+    # checar se o link possui extensao de imagens
     isImage = (
         path.endswith(".png") or
         path.endswith(".jpg") or
@@ -166,6 +170,7 @@ def image_exists(path):
     )
     if isImage:
         result = requests.head(path)
+        # checar se o link retorna um codigo valido
         return result.status_code == 200
     else:
         return False
@@ -237,7 +242,7 @@ def deleteItem():
     if ((itemID is '' or itemID is None) or (int(itemID) not in list_of_id)):
         return redirect(url_for('catalog'))
 
-    # deletar itemchemy.orm.query.Query' is not map
+    # deletar
     item = session.query(Item).filter_by(id=itemID).first()
     session.delete(item)
     session.commit()
@@ -302,31 +307,20 @@ def itemJSON():
 
 
 #     Login, autorizacao e autenticacao     #
-
-# Token antifraude
-@app.route('/login')
-@app.route('/login.html')
-def showLogin():
-    # state = ''.join(random.choice(string.ascii_uppercase + string.digits)
-    #               for x in range(32))
-    state = hashlib.sha256(os.urandom(1024)).hexdigest()
-    login_session['state'] = state
-    return render_template('login.html', STATE=state)
-
-
+# Conectar com a conta google
 @app.route('/gconnect', methods=['POST'])
 def gconnect():
-    # Validate state token
+    # Validar token
     if request.args.get('state') != login_session['state']:
         response = make_response(json.dumps('Invalid state parameter.'), 401)
         response.headers['Content-Type'] = 'application/json'
         print('invalid state')
         return response
-    # Obtain authorization code
+    # Obter codigo de autorizacao
     code = request.data
 
     try:
-        # Upgrade the authorization code into a credentials object
+        # tranformar codigo de autorizacao em credenciais
         oauth_flow = flow_from_clientsecrets('client_secrets.json', scope='')
         oauth_flow.redirect_uri = 'postmessage'
         credentials = oauth_flow.step2_exchange(code)
@@ -337,7 +331,7 @@ def gconnect():
         print('failed authorization')
         return response
 
-    # Check that the access token is valid.
+    # Checar se o token é valido
     access_token = credentials.access_token
     url = ('https://www.googleapis.com/oauth2/v1/tokeninfo?access_token=%s'
            % access_token)
@@ -346,13 +340,13 @@ def gconnect():
     response = h.request(url, 'GET')[1]
     str_response = response.decode('utf-8')
     result = json.loads(str_response)
-    # If there was an error in the access token info, abort.
+    # abortar se houver erro na informacao
     if result.get('error') is not None:
         response = make_response(json.dumps(result.get('error')), 500)
         response.headers['Content-Type'] = 'application/json'
         return response
 
-    # Verify that the access token is used for the intended user.
+    # verificar se o token esta sendo utilizado pelo usuario correto
     gplus_id = credentials.id_token['sub']
     if result['user_id'] != gplus_id:
         response = make_response(
@@ -360,7 +354,7 @@ def gconnect():
         response.headers['Content-Type'] = 'application/json'
         return response
 
-    # Verify that the access token is valid for this app.
+    # verificar se o token e valido para o aplicativo
     if result['issued_to'] != CLIENT_ID:
         response = make_response(
             json.dumps("Token's client ID does not match app's."), 401)
@@ -377,11 +371,11 @@ def gconnect():
         response.headers['Content-Type'] = 'application/json'
         return response
 
-    # Store the access token in the session for later use.
+    # salvar o token para uso posterior
     login_session['access_token'] = credentials.access_token
     login_session['gplus_id'] = gplus_id
 
-    # Get user info
+    # coletar informacoes do usuario
     userinfo_url = "https://www.googleapis.com/oauth2/v1/userinfo"
     params = {'access_token': credentials.access_token, 'alt': 'json'}
     answer = requests.get(userinfo_url, params=params)
@@ -392,7 +386,8 @@ def gconnect():
     login_session['picture'] = data['picture']
     login_session['email'] = data['email']
 
-    # check if user exists, if not create a new one
+    # checar se o usuario existe
+    # se nao existe, criar um novo
     if not getUserID(login_session['email']):
         login_session['user_id'] = createUser(login_session)
 
