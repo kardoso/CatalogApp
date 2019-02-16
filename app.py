@@ -9,7 +9,9 @@ from sqlalchemy.orm import sessionmaker
 # importar classes do arquivo "database_setup"
 from setupdb import User, Category, Item
 
-from flask import Flask, request, redirect, render_template, url_for, jsonify, abort, make_response, g
+from flask import Flask, request, redirect
+from flask import render_template, url_for
+from flask import jsonify, abort, make_response
 import json
 
 from flask import session as login_session

@@ -8,11 +8,6 @@ from sqlalchemy import Column, Integer, String, DateTime, ForeignKey
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import relationship, sessionmaker
 from sqlalchemy import create_engine
-from passlib.apps import custom_app_context as pwd_context
-from itsdangerous import (
-    TimedJSONWebSignatureSerializer as Serializer,
-    BadSignature, SignatureExpired
-)
 
 Base = declarative_base()
 secret_key = hashlib.sha256(os.urandom(1024)).hexdigest()
