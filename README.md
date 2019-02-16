@@ -33,7 +33,7 @@ No terminal use o comando `python initdb.py` ou `python3 initdb.py` se tiver mai
 
 Depois de montar o banco de dados execute o arquivo `app.py` com o comando `python app.py`
 
-O aplicativo estará rodando e poderá ser acessado a partir da url `localhost:8000`
+O aplicativo estará rodando e poderá ser acessado a partir da url [localhost:8000](http://localhost:8000)
 
 
 ## Caminhos do site
@@ -52,8 +52,6 @@ As páginas de criação e edição só podem ser acessadas por quem está logad
 E a exclusão de itens também só pode ser feita por quem está logado.
 
 O login é feito a partir da conta google.
-
-**Obs**: Utilize a url localhost:8000 para ter acesso ao login do google.
 
 
 ## Endpoints JSON - API
