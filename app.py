@@ -15,7 +15,6 @@ from flask import jsonify, abort, make_response
 import json
 
 from flask import session as login_session
-from flask_httpauth import HTTPBasicAuth
 from oauth2client.client import flow_from_clientsecrets
 from oauth2client.client import FlowExchangeError
 import httplib2
@@ -29,8 +28,6 @@ engine = create_engine(
 # estabelecer conexão
 DBSession = sessionmaker(bind=engine)
 session = DBSession()
-
-auth = HTTPBasicAuth()
 
 app = Flask(__name__)
 
