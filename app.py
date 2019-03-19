@@ -22,7 +22,7 @@ import requests
 
 # selecionar banco de dados
 engine = create_engine(
-    'sqlite:///catalog.db',
+    'sqlite:////var/www/catalog_app/catalog.db',
     connect_args={'check_same_thread': False}
 )
 # estabelecer conexão
@@ -30,9 +30,11 @@ DBSession = sessionmaker(bind=engine)
 session = DBSession()
 
 app = Flask(__name__)
+# Keep secret_key secret
+app.secret_key = hashlib.sha256(os.urandom(1024)).hexdigest()
 
 CLIENT_ID = json.loads(
-    open('client_secrets.json', 'r').read())['web']['client_id']
+    open('/var/www/catalog_app/client_secrets.json', 'r').read())['web']['client_id']
 
 
 @app.route("/")
@@ -464,10 +466,5 @@ def gdisconnect():
 
 
 if __name__ == '__main__':
-    port = int(os.environ.get('PORT', 8000))
-    app.config.from_mapping(
-        SECRET_KEY=os.environ.get('SECRET_KEY')
-        or hashlib.sha256(os.urandom(1024)).hexdigest()
-    )
-    app.debug = True
-    app.run(host='0.0.0.0', port=port)
+    app.debug = False
+    app.run()
